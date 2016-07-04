@@ -1,0 +1,22 @@
+Sub filelist()
+
+Dim filename As String
+
+'check if exists file
+filename = Dir(ThisWorkbook.path & "\input\*.xlsx")
+    If filename = "" Then
+        MsgBox ("no file")
+    End If
+
+'grab the file name list
+Dim i As Integer
+m = 0
+Do While filename <> ""
+    m = m + 1
+    Worksheets("Index").Cells(m + 3, 2).Value = filename
+    filename = Dir
+Loop
+
+MsgBox ("Check Finished")
+
+End Sub
