@@ -1,0 +1,95 @@
+Sub operate()
+
+'start doing pv table
+Dim j, k, l As Integer
+Dim pathopen, pathclose As String
+Dim check As Boolean
+Dim name
+Dim pvtable As PivotTable
+Dim pvfield As PivotField
+Dim pvcache As PivotCache
+
+'count the number
+j = 0
+Do While Worksheets("Index").Cells(j + 4, 2).Value <> ""
+j = j + 1
+Loop
+
+'dim the key word
+name = Array("Full Name", "Personnel Number", "Payment Date", "Wage Type Long Text", "Amount")
+
+'loop start
+k = 1
+Do While k <= j
+
+'open the file
+pathopen = ThisWorkbook.path & "\input\" & Worksheets("Index").Cells(k + 3, 2).Value
+pathclose = ThisWorkbook.path & "\output\" & Worksheets("Index").Cells(k + 3, 2).Value
+Workbooks.Open (pathopen)
+
+'check the key word
+check = False
+For l = 0 To 4 Step 1
+If ActiveSheet.UsedRange.Find(name(l)) Is Nothing Then
+check = True
+End If
+Next l
+
+'key word verify output
+If check = True Then
+ActiveWorkbook.Close
+ThisWorkbook.Worksheets("Index").Cells(k + 3, 12).Value = "ERROR"
+ThisWorkbook.Worksheets("Index").Cells(k + 3, 12).Interior.ColorIndex = 6
+Else
+
+
+Range("A1").Select
+'rename the sheet
+ActiveSheet.name = "Data Page"
+'creat a new sheet to fit pv table
+Worksheets.Add.name = "Pivot Table"
+'creat the pv table
+Set pvcache = ActiveWorkbook.PivotCaches.Create(SourceType:=xlDatabase, SourceData:=Worksheets("Data Page").UsedRange)
+Set pvtable = pvcache.CreatePivotTable(Worksheets("Pivot Table").Cells(1, 1), "PVtable")
+'set fields
+Set pvfield = pvtable.PivotFields("Wage Type Long Text")
+pvfield.Orientation = xlRowField
+Set pvfield = pvtable.PivotFields("Payment Date")
+pvfield.Orientation = xlColumnField
+Set pvfield = pvtable.PivotFields("Amount")
+pvfield.Orientation = xlDataField
+pvfield.Function = xlSum
+Set pvfield = pvtable.PivotFields("Full Name")
+pvfield.Orientation = xlPageField
+Set pvfield = pvtable.PivotFields("Personnel Number")
+pvfield.Orientation = xlPageField
+
+'set table style and format
+pvtable.TableStyle2 = "PivotStyleLight16"
+Worksheets("Pivot Table").UsedRange.Font.name = "Arial"
+Worksheets("Pivot Table").UsedRange.Font.Size = 10
+Worksheets("Pivot Table").UsedRange.Columns.AutoFit
+Worksheets("Pivot Table").UsedRange.NumberFormat = "#,##0.00_ "
+
+'save and close the file
+Application.DisplayAlerts = False
+ActiveWorkbook.SaveAs (pathclose)
+ActiveWorkbook.Close
+
+'record the result
+ThisWorkbook.Worksheets("Index").Cells(k + 3, 3).Value = "Done"
+ThisWorkbook.Worksheets("Index").Cells(k + 3, 3).Font.ColorIndex = 2
+ThisWorkbook.Worksheets("Index").Cells(k + 3, 3).Interior.ColorIndex = 43
+
+
+
+End If
+
+
+'loop end
+k = k + 1
+Loop
+
+MsgBox ("Done")
+
+End Sub
