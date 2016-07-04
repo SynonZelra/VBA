@@ -1,0 +1,14 @@
+Sub reset()
+
+Dim i As Integer
+n = 0
+Do While Worksheets("Index").Cells(n + 4, 2).Value <> ""
+    Worksheets("Index").Cells(n + 4, 2).Value = ""
+    Worksheets("Index").Cells(n + 4, 3).Value = ""
+    Worksheets("Index").Cells(n + 4, 3).Interior.ColorIndex = 2
+    n = n + 1
+Loop
+
+MsgBox ("Reset Finished")
+
+End Sub
