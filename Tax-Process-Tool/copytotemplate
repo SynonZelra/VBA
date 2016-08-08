@@ -1,0 +1,58 @@
+Sub copytotemplate()
+
+Dim p As Integer
+Dim pathstring As String
+Dim templatebook As Workbook
+Dim resourcebook As Workbook
+Dim resource As Worksheet
+Dim target As String
+Dim pin As String
+Dim rang As String
+
+pathstring = ThisWorkbook.path & "\1M Tax Report Template.xlsx"
+Workbooks.Open (pathstring)
+Set templatebook = ActiveWorkbook
+
+p = 2
+
+Do While ThisWorkbook.Sheets("Data").Cells(p, 1).Value <> ""
+
+    If ThisWorkbook.Sheets("Data").Cells(p, 3).Value = "Yes" Then
+    
+        If ThisWorkbook.Sheets("Data").Cells(p, 5).Value = "PCI" _
+        Or ThisWorkbook.Sheets("Data").Cells(p, 5).Value = "non-PCI" Then
+            
+            pathstring = ThisWorkbook.Worksheets("Variant").Cells(3, 11) & "\Tax Reports Processed\Processed-" _
+            & ThisWorkbook.Sheets("Data").Cells(p, 1).Value
+            Workbooks.Open (pathstring)
+            Set resourcebook = ActiveWorkbook
+            Set resource = ActiveSheet
+            
+            If ThisWorkbook.Sheets("Data").Cells(p, 5).Value = "PCI" Then
+                target = "PCI " & ThisWorkbook.Sheets("Data").Cells(p, 4).Value
+            Else
+                target = ThisWorkbook.Sheets("Data").Cells(p, 2).Value & " " & _
+                ThisWorkbook.Sheets("Data").Cells(p, 4).Value
+            End If
+            
+            rang = resource.UsedRange.Rows.Count
+            pin = templatebook.Sheets(target).UsedRange.Rows.Count
+            
+            resource.Rows("2:" & rang).Copy _
+            Destination:=templatebook.Sheets(target).Range("A" & pin + 1)
+            
+            resourcebook.Close (False)
+            
+        End If
+        
+    End If
+    
+    p = p + 1
+
+Loop
+
+pathstring = ThisWorkbook.Worksheets("Variant").Cells(3, 11) & "\1M Tax Report " & ThisWorkbook.Sheets("Variant").Cells(1, 11).Value
+templatebook.SaveAs (pathstring)
+templatebook.Close
+
+End Sub
