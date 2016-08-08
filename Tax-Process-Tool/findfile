@@ -1,0 +1,20 @@
+Sub findfile()
+
+Dim filename As String
+
+'check if exists file
+filename = dir(ThisWorkbook.path & "\Tax Reports\*.xlsx")
+    If filename = "" Then
+        ThisWorkbook.Worksheets("Data").Cells(2, 1).Value = "Not Found"
+    End If
+
+'grab the file name list
+Dim m As Integer
+m = 0
+Do While filename <> ""
+    m = m + 1
+    Worksheets("Data").Cells(m + 1, 1).Value = filename
+    filename = dir
+Loop
+
+End Sub
