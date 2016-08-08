@@ -1,0 +1,31 @@
+Sub payreginform()
+
+Dim pg As String
+Dim perd As String
+
+perd = ThisWorkbook.Worksheets("Variant").Cells(1, 11).Value
+
+pg = dir(ThisWorkbook.path & "\PayReg\*.xlsx")
+    If pg = "" Then
+        ThisWorkbook.Worksheets("PayReg").Cells(2, 1).Value = "Not Found"
+    End If
+
+Dim w As Integer
+w = 0
+Do While pg <> ""
+    w = w + 1
+    Worksheets("PayReg").Cells(w + 1, 1).Value = pg
+    pg = dir
+Loop
+
+w = 2
+Do While ThisWorkbook.Worksheets("PayReg").Cells(w, 1).Value <> ""
+    If Not ThisWorkbook.Worksheets("PayReg").Cells(w, 1).find(what:=perd) Is Nothing Then
+        ThisWorkbook.Worksheets("PayReg").Cells(w, 2).Value = "OK"
+    Else
+        ThisWorkbook.Worksheets("PayReg").Cells(w, 2).Value = "ERROR"
+    End If
+    w = w + 1
+Loop
+
+End Sub
