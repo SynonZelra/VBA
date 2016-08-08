@@ -1,0 +1,6 @@
+Sub start()
+
+Menu.Periodbox.List = Worksheets("Variant").UsedRange.Columns(1).Value
+Menu.Show
+
+End Sub
