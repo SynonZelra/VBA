@@ -1,0 +1,41 @@
+Sub clear()
+
+Dim aa, bb As Integer
+Dim pre(1 To 9) As String
+Dim pos(1 To 4) As String
+Dim nname As String
+Dim wbw As Workbook
+
+Application.DisplayAlerts = False
+On Error Resume Next
+
+pre(1) = "PCI"
+pre(2) = "CN12"
+pre(3) = "CN0M"
+pre(4) = "BJ"
+pre(5) = "SH"
+pre(6) = "CD"
+pre(7) = "GZ"
+pre(8) = "SZ"
+pre(9) = "Others"
+
+pos(1) = "Salary"
+pos(2) = "Bonus"
+pos(3) = "SP"
+pos(4) = "SO"
+
+Workbooks.Open (ThisWorkbook.Sheets("Variant").Cells(3, 11).Value & "\1M Tax Report " & ThisWorkbook.Sheets("Variant").Cells(1, 11) & ".XLSX")
+Set wbw = ActiveWorkbook
+
+For aa = 1 To 9
+    For bb = 1 To 4
+        If Worksheets(pre(aa) & " " & pos(bb)).UsedRange.Rows.Count < 2 Then
+            Worksheets(pre(aa) & " " & pos(bb)).Delete
+        End If
+    Next
+Next
+
+wbw.Save
+wbw.Close
+
+End Sub
