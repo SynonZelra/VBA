@@ -1,0 +1,95 @@
+Sub taxreport()
+
+Dim x As Integer
+Dim y As Integer
+Dim amount As Double
+Dim path As String
+Dim pathopen As String
+Dim pathclose As String
+Dim menusheet As Worksheet
+Dim taxbook As Workbook
+Dim taxsheet As Worksheet
+Dim hc As Integer
+
+Application.DisplayAlerts = False
+
+Set menusheet = ThisWorkbook.Worksheets("Data")
+path = ThisWorkbook.path
+
+x = 2
+Do While menusheet.Cells(x, 1) <> ""
+    If menusheet.Cells(x, 3).Value = "Yes" Then
+        pathopen = path & "\Tax Reports\" & menusheet.Cells(x, 1)
+        pathclose = ThisWorkbook.Sheets("Variant").Cells(3, 11) & "\Tax Reports Processed\Processed-" & menusheet.Cells(x, 1)
+        Workbooks.Open (pathopen)
+        Set taxbook = ActiveWorkbook
+        Set taxsheet = taxbook.ActiveSheet
+        
+        y = 2
+        hc = 0
+        amount = 0
+        
+        If menusheet.Cells(x, 4).Value = "Salary" Then
+            Do While taxsheet.Cells(y, 1) <> ""
+                If taxsheet.Cells(y, 5) = "" Then
+                    taxsheet.Rows(y).Delete
+                Else
+                    y = y + 1
+                End If
+            Loop
+            y = 2
+            Do While taxsheet.Cells(y, 1) <> ""
+                hc = hc + 1
+                amount = amount + taxsheet.Cells(y, 18).Value
+                y = y + 1
+            Loop
+            menusheet.Cells(x, 6).Value = hc
+            menusheet.Cells(x, 7).Value = amount
+            taxbook.SaveAs (pathclose)
+            taxbook.Close
+        ElseIf menusheet.Cells(x, 4).Value = "SP" Then
+            Do While taxsheet.Cells(y, 1).Value <> ""
+                If taxsheet.Cells(y, 5).Value = "" Or taxsheet.Cells(y, 11).Value = 0 Then
+                    taxsheet.Rows(y).Delete
+                Else
+                    y = y + 1
+                End If
+            Loop
+            y = 2
+            Do While taxsheet.Cells(y, 1) <> ""
+                hc = hc + 1
+                amount = amount + taxsheet.Cells(y, 18).Value
+                y = y + 1
+            Loop
+            menusheet.Cells(x, 6).Value = hc
+            menusheet.Cells(x, 7).Value = amount
+            taxbook.SaveAs (pathclose)
+            taxbook.Close
+        ElseIf menusheet.Cells(x, 4).Value = "Bonus" _
+        Or menusheet.Cells(x, 4).Value = "SO" Then
+            Do While taxsheet.Cells(y, 1).Value <> ""
+                If taxsheet.Cells(y, 5).Value = "" Or taxsheet.Cells(y, 18).Value = 0 Then
+                    taxsheet.Rows(y).Delete
+                Else
+                    y = y + 1
+                End If
+            Loop
+            y = 2
+            Do While taxsheet.Cells(y, 1) <> ""
+                hc = hc + 1
+                amount = amount + taxsheet.Cells(y, 18).Value
+                y = y + 1
+            Loop
+            menusheet.Cells(x, 6).Value = hc
+            menusheet.Cells(x, 7).Value = amount
+            taxbook.SaveAs (pathclose)
+            taxbook.Close
+        Else
+            taxbook.Close
+        End If
+    End If
+    
+    x = x + 1
+    
+Loop
+End Sub
