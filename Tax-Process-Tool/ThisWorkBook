@@ -1,0 +1,5 @@
+Sub workbook_open()
+
+ThisWorkbook.Worksheets("Tutorial").Activate
+
+End Sub
