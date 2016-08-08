@@ -1,0 +1,65 @@
+Sub findinformation()
+
+Dim i As Integer
+Dim j As Integer
+Dim ccode()
+Dim ptype(1 To 4)
+Dim findvalue As Boolean
+Dim ccodetar As String
+
+pvalue = Worksheets("Variant").Cells(1, 11).Value
+ptype(1) = "Salary"
+ptype(2) = "Bonus"
+ptype(3) = "SO"
+ptype(4) = "SP"
+
+j = 0
+Do While Worksheets("Variant").Cells(j + 1, 3) <> ""
+    j = j + 1
+Loop
+
+ReDim ccode(1 To j)
+i = 1
+Do While i <= j
+    ccode(i) = Worksheets("Variant").Cells(i, 3).Value
+    i = i + 1
+Loop
+
+i = 2
+Do While Worksheets("Data").Cells(i, 1) <> ""
+    Worksheets("Data").Cells(i, 2).Value = "Not Found"
+    Worksheets("Data").Cells(i, 4).Value = "Not Found"
+
+    If Not Worksheets("Data").Rows(i).find(what:=pvalue) Is Nothing Then
+        Worksheets("Data").Cells(i, 3).Value = "Yes"
+    Else
+        Worksheets("Data").Cells(i, 3).Value = "No"
+    End If
+    
+    For Each ccodes In ccode()
+        If Not Worksheets("Data").Rows(i).find(what:=ccodes) Is Nothing Then
+            Worksheets("Data").Cells(i, 2).Value = ccodes
+        End If
+    Next
+    
+    For Each types In ptype()
+        If Not Worksheets("Data").Rows(i).find(what:=types) Is Nothing Then
+            Worksheets("Data").Cells(i, 4).Value = types
+        End If
+    Next
+    
+    ccodetar = Worksheets("Data").Cells(i, 2).Value
+    If Not Worksheets("Variant").Columns(5).find(what:=ccodetar) Is Nothing Then
+        Worksheets("Data").Cells(i, 5).Value = "PCI"
+    ElseIf Not Worksheets("Variant").Columns(7).find(what:=ccodetar) Is Nothing Then
+        Worksheets("Data").Cells(i, 5).Value = "non-PCI"
+    ElseIf Not Worksheets("Variant").Columns(9).find(what:=ccodetar) Is Nothing Then
+        Worksheets("Data").Cells(i, 5).Value = "non-1M"
+    Else
+        Worksheets("Data").Cells(i, 5).Value = "Error"
+    End If
+    
+    i = i + 1
+Loop
+
+End Sub
