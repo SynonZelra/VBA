@@ -1,0 +1,57 @@
+Sub hearcountcheck()
+
+Dim dd, ee, ff, gg, hhcc As Integer
+Dim preg, taxr As Workbook
+Dim pres, taxs As Worksheet
+Dim ccod As String
+
+If ThisWorkbook.Worksheets("PayReg").Cells(2, 1).Value <> "Not Found" Then
+
+dd = 2
+Do While ThisWorkbook.Worksheets("Data").Cells(dd, 1).Value <> "" _
+And ThisWorkbook.Worksheets("Data").Cells(dd, 3).Value = "Yes"
+
+    If ThisWorkbook.Worksheets("Data").Cells(dd, 4).Value = "Salary" Then
+        ccod = ThisWorkbook.Worksheets("Data").Cells(dd, 2)
+        Workbooks.Open (ThisWorkbook.Worksheets("Variant").Cells(3, 11).Value & _
+        "\Tax Reports Processed\Processed-" & ThisWorkbook.Worksheets("Data").Cells(dd, 1).Value)
+        Set taxr = ActiveWorkbook
+        Set taxs = ActiveSheet
+        
+        ee = 2
+        Do While ThisWorkbook.Worksheets("PayReg").Cells(ee, 1).Value <> ""
+            If Not ThisWorkbook.Worksheets("PayReg").Cells(ee, 1).find(what:=ccod) Is Nothing _
+            And ThisWorkbook.Worksheets("PayReg").Cells(ee, 2).Value = "OK" Then
+                Workbooks.Open (ThisWorkbook.path & "\PayReg\" & ThisWorkbook.Worksheets("PayReg").Cells(ee, 1))
+                Set preg = ActiveWorkbook
+                Set pres = ActiveSheet
+                Exit Do
+            End If
+        ee = ee + 1
+        Loop
+        
+        ff = 2
+        Do While taxs.Cells(ff, 1).Value <> ""
+            If pres.UsedRange.Columns(1).find(what:=taxs.Cells(ff, 1).Value) Is Nothing Then
+                taxs.Rows(ff).Delete
+            Else
+                ff = ff + 1
+            End If
+        Loop
+        
+        gg = 2
+        Do While taxs.Cells(gg, 1).Value <> ""
+            gg = gg + 1
+        Loop
+        
+        preg.Close
+        taxr.Save
+        taxr.Close
+        ThisWorkbook.Worksheets("Data").Cells(dd, 6).Value = gg - 2
+
+    End If
+    dd = dd + 1
+Loop
+
+End If
+End Sub
