@@ -1,0 +1,68 @@
+Sub finishreport()
+
+Dim pins As Integer
+Dim q As Integer
+Dim names(1 To 4) As String
+Dim types(1 To 4) As String
+Dim hostbook As Workbook
+Dim hostsheet As Worksheet
+Dim k As Integer
+
+names(1) = "PCI Salary"
+names(2) = "PCI Bonus"
+names(3) = "PCI SO"
+names(4) = "PCI SP"
+
+types(1) = "Salary"
+types(2) = "Bonus"
+types(3) = "SO"
+types(4) = "SP"
+
+Workbooks.Open (ThisWorkbook.Sheets("Variant").Cells(3, 11).Value & "\1M Tax Report " & ThisWorkbook.Sheets("Variant").Cells(1, 11) & ".XLSX")
+Set hostbook = ActiveWorkbook
+
+For k = 1 To 4
+
+    Set hostsheet = hostbook.Sheets(names(k))
+    q = 2
+    Do While hostsheet.Cells(q, 1).Value <> ""
+    
+        Select Case hostsheet.Cells(q, 7).Value
+        
+            Case "BJ"
+                pins = hostbook.Sheets("BJ " & types(k)).UsedRange.Rows.Count
+                hostsheet.Rows(q).Copy _
+                Destination:=hostbook.Sheets("BJ " & types(k)).Range("A" & pins + 1)
+            Case "SH"
+                pins = hostbook.Sheets("SH " & types(k)).UsedRange.Rows.Count
+                hostsheet.Rows(q).Copy _
+                Destination:=hostbook.Sheets("SH " & types(k)).Range("A" & pins + 1)
+            Case "CD"
+                pins = hostbook.Sheets("CD " & types(k)).UsedRange.Rows.Count
+                hostsheet.Rows(q).Copy _
+                Destination:=hostbook.Sheets("CD " & types(k)).Range("A" & pins + 1)
+            Case "GZ"
+                pins = hostbook.Sheets("GZ " & types(k)).UsedRange.Rows.Count
+                hostsheet.Rows(q).Copy _
+                Destination:=hostbook.Sheets("GZ " & types(k)).Range("A" & pins + 1)
+            Case "SZ"
+                pins = hostbook.Sheets("SZ " & types(k)).UsedRange.Rows.Count
+                hostsheet.Rows(q).Copy _
+                Destination:=hostbook.Sheets("SZ " & types(k)).Range("A" & pins + 1)
+            Case Else
+                pins = hostbook.Sheets("Others " & types(k)).UsedRange.Rows.Count
+                hostsheet.Rows(q).Copy _
+                Destination:=hostbook.Sheets("Others " & types(k)).Range("A" & pins + 1)
+            
+        End Select
+        
+        q = q + 1
+        
+    Loop
+
+Next
+
+hostbook.Save
+hostbook.Close
+
+End Sub
