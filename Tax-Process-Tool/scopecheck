@@ -1,0 +1,48 @@
+Sub scopecheck()
+
+Dim cc, dd As Integer
+Dim wbb As Workbook
+Dim wss As Worksheet
+Dim codee
+Dim key As Integer
+Dim judge As Boolean
+Dim sear As String
+
+Application.DisplayAlerts = False
+
+codee = Array("CN14", "CN15", "CN90", "CNX0", "CNY1", "CN12", "CN0M", "CN98", "CN9M")
+
+cc = 2
+Do While ThisWorkbook.Worksheets("Data").Cells(cc, 1).Value <> "" _
+And ThisWorkbook.Worksheets("Data").Cells(cc, 3).Value = "Yes"
+    key = Application.Match(ThisWorkbook.Worksheets("Data").Cells(cc, 2).Value, codee, 0)
+
+    Workbooks.Open (ThisWorkbook.Worksheets("Variant").Cells(3, 11).Value & "\Tax Reports Processed\Processed-" & _
+    ThisWorkbook.Worksheets("Data").Cells(cc, 1).Value)
+    
+    Set wbb = ActiveWorkbook
+    Set wss = ActiveSheet
+    
+    judge = False
+    dd = 2
+    Do While wss.Cells(dd, 2).Value <> ""
+        sear = wss.Cells(dd, 7).Value
+        If ThisWorkbook.Worksheets("Scopes").Columns(key).find(what:=sear) Is Nothing Then
+            wss.Cells(dd, 7).Interior.ColorIndex = 6
+            judge = True
+        End If
+        dd = dd + 1
+    Loop
+    
+    If judge = True Then
+        ThisWorkbook.Worksheets("Data").Cells(cc, 8).Value = "Error"
+        wbb.Save
+        wbb.Close
+    Else
+        ThisWorkbook.Worksheets("Data").Cells(cc, 8).Value = "Pass"
+        wbb.Close
+    End If
+    cc = cc + 1
+Loop
+
+End Sub
