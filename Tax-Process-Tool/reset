@@ -1,0 +1,55 @@
+Sub reset()
+
+Dim datasheet As Worksheet
+
+Application.DisplayAlerts = False
+
+Set datasheet = ThisWorkbook.Worksheets("Data")
+If Not datasheet Is Nothing Then
+    datasheet.Delete
+End If
+
+Worksheets("DataBackup").Visible = xlSheetVisible
+ThisWorkbook.Worksheets("DataBackup").Copy after:=Sheets(Sheets.Count)
+Set datasheet = ActiveSheet
+datasheet.Name = "Data"
+datasheet.Visible = xlSheetHidden
+Worksheets("DataBackup").Visible = xlSheetHidden
+
+Set datasheet = ThisWorkbook.Worksheets("PayReg")
+If Not datasheet Is Nothing Then
+    datasheet.Delete
+End If
+
+Worksheets("PayRegBackup").Visible = xlSheetVisible
+ThisWorkbook.Worksheets("PayRegBackup").Copy after:=Sheets(Sheets.Count)
+Set datasheet = ActiveSheet
+datasheet.Name = "PayReg"
+datasheet.Visible = xlSheetHidden
+Worksheets("PayRegBackup").Visible = xlSheetHidden
+
+Set datasheet = ThisWorkbook.Worksheets("Variant")
+If Not datasheet Is Nothing Then
+    datasheet.Delete
+End If
+
+Worksheets("VariantBackup").Visible = xlSheetVisible
+ThisWorkbook.Worksheets("VariantBackup").Copy after:=Sheets(Sheets.Count)
+Set datasheet = ActiveSheet
+datasheet.Name = "Variant"
+datasheet.Visible = xlSheetHidden
+Worksheets("VariantBackup").Visible = xlSheetHidden
+
+Set datasheet = ThisWorkbook.Worksheets("Output")
+If Not datasheet Is Nothing Then
+    datasheet.Delete
+End If
+
+Worksheets("OutputBackup").Visible = xlSheetVisible
+ThisWorkbook.Worksheets("OutputBackup").Copy after:=Sheets(Sheets.Count)
+Set datasheet = ActiveSheet
+datasheet.Name = "Output"
+datasheet.Visible = xlSheetHidden
+Worksheets("OutputBackup").Visible = xlSheetHidden
+
+End Sub
