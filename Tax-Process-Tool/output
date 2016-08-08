@@ -1,0 +1,20 @@
+Sub output()
+
+Dim outbook As Workbook
+
+Application.DisplayAlerts = False
+
+ThisWorkbook.Worksheets("Data").UsedRange.Copy Destination:=ThisWorkbook.Sheets("Output").Range("A1")
+ThisWorkbook.Worksheets("PayReg").UsedRange.Copy Destination:=ThisWorkbook.Sheets("Output").Range("J1")
+
+ThisWorkbook.Worksheets("Output").Visible = True
+ThisWorkbook.Worksheets("Output").Copy
+Set outbook = ActiveWorkbook
+ThisWorkbook.Worksheets("Output").Visible = False
+
+outbook.ActiveSheet.Name = "Output"
+
+outbook.SaveAs (ThisWorkbook.Worksheets("Variant").Cells(3, 11).Value & "\Output Log.xlsx")
+outbook.Close
+
+End Sub
