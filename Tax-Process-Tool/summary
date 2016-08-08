@@ -1,0 +1,127 @@
+Sub summary()
+
+Dim smtable As Workbook
+Dim smpage As Worksheet
+Dim cata(1 To 4) As String
+Dim spec(1 To 2) As String
+Dim specamt(1 To 2, 1 To 4) As Double
+Dim r, t, s, u As Integer
+Dim sh(1 To 5, 1 To 4) As Double
+Dim locamt(1 To 5, 1 To 4, 1 To 4) As Double
+Dim loc(1 To 5) As String
+Dim wts As Worksheet
+
+cata(1) = "Salary"
+cata(2) = "Bonus"
+cata(3) = "SP"
+cata(4) = "SO"
+
+spec(1) = "CN12"
+spec(2) = "CN0M"
+
+loc(1) = "BJ"
+loc(2) = "CD"
+loc(3) = "GZ"
+loc(4) = "SZ"
+loc(5) = "Others"
+
+Workbooks.Open (ThisWorkbook.Sheets("Variant").Cells(3, 11).Value & "\1M Tax Report " & ThisWorkbook.Sheets("Variant").Cells(1, 11) & ".XLSX")
+Set smtable = ActiveWorkbook
+Set smpage = smtable.Sheets("Summary")
+
+For r = 1 To 2
+    For t = 1 To 4
+        specamt(r, t) = 0
+    Next
+Next
+
+For r = 1 To 2
+    For t = 1 To 4
+        s = 2
+        Do While smtable.Sheets(spec(r) & " " & cata(t)).Cells(s, 1).Value <> ""
+            specamt(r, t) = specamt(r, t) + smtable.Sheets(spec(r) & " " & cata(t)).Cells(s, 18).Value
+            s = s + 1
+        Loop
+    Next
+Next
+
+For r = 1 To 2
+    For t = 1 To 4
+        smpage.Cells(r + 26, t + 1).Value = specamt(r, t)
+    Next
+Next
+
+For r = 1 To 5
+    For t = 1 To 4
+        sh(r, t) = 0
+    Next
+Next
+
+For t = 1 To 4
+    s = 2
+    Set wts = smtable.Sheets("SH " & cata(t))
+    Do While wts.Cells(s, 1).Value <> ""
+    
+        Select Case wts.Cells(s, 2).Value
+            Case "CN14"
+                sh(1, t) = sh(1, t) + wts.Cells(s, 18).Value
+            Case "CN15"
+                sh(2, t) = sh(2, t) + wts.Cells(s, 18).Value
+            Case "CN90"
+                sh(3, t) = sh(3, t) + wts.Cells(s, 18).Value
+            Case "CNX0"
+                sh(4, t) = sh(4, t) + wts.Cells(s, 18).Value
+            Case "CNY1"
+                sh(5, t) = sh(5, t) + wts.Cells(s, 18).Value
+        End Select
+        s = s + 1
+    Loop
+Next
+
+For r = 1 To 5
+    For t = 1 To 4
+        smpage.Cells(r + 3, t + 2).Value = sh(r, t)
+    Next
+Next
+
+For r = 1 To 5
+    For t = 1 To 4
+        For u = 1 To 4
+            locamt(r, t, u) = 0
+        Next
+    Next
+Next
+
+For r = 1 To 5
+    For t = 1 To 4
+        Set wts = smtable.Sheets(loc(r) & " " & cata(t))
+        s = 2
+        Do While wts.Cells(s, 1).Value <> ""
+        
+            Select Case wts.Cells(s, 2).Value
+                Case "CN15"
+                    locamt(r, t, 1) = locamt(r, t, 1) + wts.Cells(s, 18).Value
+                Case "CN90"
+                    locamt(r, t, 2) = locamt(r, t, 2) + wts.Cells(s, 18).Value
+                Case "CNX0"
+                    locamt(r, t, 3) = locamt(r, t, 3) + wts.Cells(s, 18).Value
+                Case "CNY1"
+                    locamt(r, t, 4) = locamt(r, t, 3) + wts.Cells(s, 18).Value
+                End Select
+            s = s + 1
+        Loop
+    Next
+Next
+
+For r = 1 To 5
+    For t = 1 To 4
+        For u = 1 To 4
+            smpage.Cells(r + 14, u * 4 + t - 2).Value = locamt(r, t, u)
+        Next
+    Next
+Next
+
+smtable.Save
+smtable.Close
+
+End Sub
