@@ -1,0 +1,50 @@
+Private Sub GO_Click()
+
+Dim creatnew As String
+
+Me.Hide
+
+Call reset
+
+ThisWorkbook.Sheets("Variant").Cells(2, 11).Value = Now
+Worksheets("Variant").Cells(1, 11).Value = Menu.Periodbox.Value
+
+creatnew = ThisWorkbook.path & "\" & Format(ThisWorkbook.Sheets("Variant").Cells(2, 11).Value, "yyyy.mm.dd_hh.mm.ss")
+Worksheets("Variant").Cells(3, 11).Value = creatnew
+
+MkDir (creatnew)
+MkDir (creatnew & "\Tax Reports Processed")
+
+Call findfile
+
+Call findinformation
+
+If RAW.Value = True Then
+    Call taxreport
+    Call scopecheck
+End If
+
+If headcount.Value = True Then
+    Call payreginform
+    Call hearcountcheck
+End If
+
+If Report.Value = True Then
+    Call copytotemplate
+    Call finishreport
+    Call summary
+    Call clear
+End If
+
+Call output
+
+MsgBox ("Completed. Please check the folder.")
+
+End Sub
+
+Sub Guide_Click()
+
+Me.Hide
+ThisWorkbook.Sheets("Tutorial").Activate
+
+End Sub
