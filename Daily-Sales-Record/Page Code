@@ -1,0 +1,47 @@
+Private Sub datamaintain_Click()
+
+Maintain.Show
+
+End Sub
+
+Private Sub analysis_Click()
+
+On Error Resume Next
+Application.DisplayAlerts = False
+
+Dim summ As Worksheet
+
+Set summ = Sheets("Analysis")
+If Not summ Is Nothing Then
+    summ.Delete
+End If
+Set summ = Worksheets.Add
+summ.Name = "Analysis"
+
+Dim pvcache As PivotCache
+Dim pvtable As PivotTable
+Dim pvfield As PivotField
+
+Set pvcache = ThisWorkbook.PivotCaches.Create(xlDatabase, Worksheets("Data").UsedRange)
+Set pvtable = pvcache.CreatePivotTable(summ.Cells(1, 1), "PV Analysis")
+
+Set pvfield = pvtable.PivotFields("Æ·Àà")
+pvfield.Orientation = xlPageField
+Set pvfield = pvtable.PivotFields("µ¥¼Û")
+pvfield.Orientation = xlColumnField
+Set pvfield = pvtable.PivotFields("²Ù×÷")
+pvfield.Orientation = xlRowField
+Set pvfield = pvtable.PivotFields("ÈÕÆÚ")
+pvfield.Orientation = xlRowField
+Set pvfield = pvtable.PivotFields("ÊýÁ¿")
+pvfield.Orientation = xlRowField
+Set pvfield = pvtable.PivotFields("×Ü¼Û")
+pvfield.Orientation = xlDataField
+pvfield.Function = xlSum
+
+pvtable.TableStyle2 = "PivotStyleLight16"
+summ.UsedRange.Font.Name = "Arial"
+summ.UsedRange.Font.Size = 10
+summ.UsedRange.Font.Columns.AutoFit
+
+End Sub
