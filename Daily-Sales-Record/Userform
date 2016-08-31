@@ -1,0 +1,119 @@
+Public i As Integer
+Public years, months, days, amounts, price
+Public names As String
+Public ws As Worksheet
+
+Private Sub MCancel_Click()
+
+Unload Me
+
+End Sub
+
+Private Sub MFinish_Click()
+
+Set ws = ThisWorkbook.Sheets("Data")
+i = Worksheets("Data").UsedRange.Rows.Count + 1
+names = Name_obj.Value
+amounts = Amount_obj.Value
+years = Year_obj.Value
+months = Month_obj.Value
+days = Day_obj.Value
+price = Price_obj.Value
+
+If IsNumeric(amounts) = False Or IsNumeric(years) = False _
+Or IsNumeric(months) = False Or IsNumeric(days) = False _
+Or IsNumeric(price) = fasle Then
+    MsgBox ("Çë¼ì²éÊýÁ¿¡¢ÈÕÆÚºÍµ¥¼Û")
+ElseIf amounts - Fix(amounts) <> 0 Or years - Fix(years) <> 0 _
+Or months - Fix(months) <> 0 Or days - Fix(days) <> 0 Then
+    MsgBox ("Çë¼ì²éÊýÁ¿ºÍÈÕÆÚ")
+ElseIf years < 1900 Or years > 2100 _
+Or months < 1 Or months > 12 _
+Or days < 1 Or days > 31 Then
+    MsgBox ("Çë¼ì²éÈÕÆÚ")
+ElseIf in_obj.Value = False And out_obj.Value = False Then
+    MsgBox ("Çë¼ì²é»õÎï²Ù×÷")
+Else
+    ws.Cells(i, 1).Value = names
+    ws.Cells(i, 2).Value = amounts
+    ws.Cells(i, 3).Value = DateSerial(years, months, days)
+    ws.Cells(i, 4).Value = price
+    
+    If in_obj.Value = True Then
+        ws.Cells(i, 5).Value = "In"
+    Else
+        ws.Cells(i, 5).Value = "Out"
+    End If
+    
+    If ws.Cells(i, 5).Value = "In" Then
+        ws.Cells(i, 6).Value = -1 * Cells(i, 2).Value * Cells(i, 4).Value
+    Else
+        ws.Cells(i, 6).Value = 1 * Cells(i, 2).Value * Cells(i, 4).Value
+    End If
+    
+    Name_obj.Value = ""
+    Amount_obj.Value = ""
+    Year_obj.Value = ""
+    Month_obj.Value = ""
+    Day_obj.Value = ""
+    Price_obj.Value = ""
+    in_obj.Value = False
+    out_obj.Value = False
+    Unload Me
+End If
+
+End Sub
+
+Private Sub MNext_Click()
+
+Set ws = ThisWorkbook.Sheets("Data")
+i = Worksheets("Data").UsedRange.Rows.Count + 1
+names = Name_obj.Value
+amounts = Amount_obj.Value
+years = Year_obj.Value
+months = Month_obj.Value
+days = Day_obj.Value
+price = Price_obj.Value
+
+If IsNumeric(amounts) = False Or IsNumeric(years) = False _
+Or IsNumeric(months) = False Or IsNumeric(days) = False _
+Or IsNumeric(price) = False Then
+    MsgBox ("Çë¼ì²éÊýÁ¿¡¢ÈÕÆÚºÍµ¥¼Û")
+ElseIf amounts - Fix(amounts) <> 0 Or years - Fix(years) <> 0 _
+Or months - Fix(months) <> 0 Or days - Fix(days) <> 0 Then
+    MsgBox ("Çë¼ì²éÊýÁ¿ºÍÈÕÆÚ")
+ElseIf years < 1900 Or years > 2100 _
+Or months < 1 Or months > 12 _
+Or days < 1 Or days > 31 Then
+    MsgBox ("Çë¼ì²éÈÕÆÚ")
+ElseIf in_obj.Value = False And out_obj.Value = False Then
+    MsgBox ("Çë¼ì²é»õÎï²Ù×÷")
+Else
+    ws.Cells(i, 1).Value = names
+    ws.Cells(i, 2).Value = amounts
+    ws.Cells(i, 3).Value = DateSerial(years, months, days)
+    ws.Cells(i, 4).Value = price
+    
+    If in_obj.Value = True Then
+        ws.Cells(i, 5).Value = "In"
+    Else
+        ws.Cells(i, 5).Value = "Out"
+    End If
+    
+    If ws.Cells(i, 5).Value = "In" Then
+        ws.Cells(i, 6).Value = -1 * Cells(i, 2).Value * Cells(i, 4).Value
+    Else
+        ws.Cells(i, 6).Value = 1 * Cells(i, 2).Value * Cells(i, 4).Value
+    End If
+    
+    Name_obj.Value = ""
+    Amount_obj.Value = ""
+    Year_obj.Value = ""
+    Month_obj.Value = ""
+    Day_obj.Value = ""
+    Price_obj.Value = ""
+    in_obj.Value = False
+    out_obj.Value = False
+End If
+
+End Sub
