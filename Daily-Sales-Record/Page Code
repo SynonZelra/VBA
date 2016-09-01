@@ -25,18 +25,21 @@ Dim pvfield As PivotField
 Set pvcache = ThisWorkbook.PivotCaches.Create(xlDatabase, Worksheets("Data").UsedRange)
 Set pvtable = pvcache.CreatePivotTable(summ.Cells(1, 1), "PV Analysis")
 
-Set pvfield = pvtable.PivotFields("Æ·Àà")
+Set pvfield = pvtable.PivotFields("品类")
 pvfield.Orientation = xlPageField
-Set pvfield = pvtable.PivotFields("µ¥¼Û")
+Set pvfield = pvtable.PivotFields("单价")
 pvfield.Orientation = xlColumnField
-Set pvfield = pvtable.PivotFields("²Ù×÷")
+pvfield.NumberFormat = "#,##0.00"
+Set pvfield = pvtable.PivotFields("操作")
 pvfield.Orientation = xlRowField
-Set pvfield = pvtable.PivotFields("ÈÕÆÚ")
+Set pvfield = pvtable.PivotFields("日期")
 pvfield.Orientation = xlRowField
-Set pvfield = pvtable.PivotFields("ÊýÁ¿")
+Set pvfield = pvtable.PivotFields("数量")
 pvfield.Orientation = xlRowField
-Set pvfield = pvtable.PivotFields("×Ü¼Û")
+pvfield.NumberFormat = "#,##0"
+Set pvfield = pvtable.PivotFields("总价")
 pvfield.Orientation = xlDataField
+pvfield.NumberFormat = "#,##0.00"
 pvfield.Function = xlSum
 
 pvtable.TableStyle2 = "PivotStyleLight16"
