@@ -1,7 +1,23 @@
 Public i As Integer
-Public years, months, days, amounts, price
+Public years, months, days, amounts, price, buyername
 Public names As String
 Public ws As Worksheet
+
+Private Sub in_obj_Click()
+
+If in_obj.Value = True Then
+Buyer.Enabled = False
+Buyer.Value = "- ÎÞÐ§ -"
+Else
+Buyer.Enabled = True
+Buyer.Value = ""
+End If
+
+End Sub
+
+Private Sub Label2_Click()
+
+End Sub
 
 Private Sub MCancel_Click()
 
@@ -31,25 +47,25 @@ ElseIf years < 1900 Or years > 2100 _
 Or months < 1 Or months > 12 _
 Or days < 1 Or days > 31 Then
     MsgBox ("Çë¼ì²éÈÕÆÚ")
-ElseIf in_obj.Value = False And out_obj.Value = False Then
+ElseIf in_obj.Value = False And Buyer.Value = False Then
     MsgBox ("Çë¼ì²é»õÎï²Ù×÷")
 Else
-    ws.Cells(i, 1).Value = names
-    ws.Cells(i, 2).Value = amounts
-    ws.Cells(i, 3).Value = DateSerial(years, months, days)
-    ws.Cells(i, 4).Value = price
-    
+
     If in_obj.Value = True Then
-        ws.Cells(i, 5).Value = "In"
+        buyername = "- ½ø»õ -"
+        price = price * -1
+        ws.Cells(i, 6).Value = amounts * price
     Else
-        ws.Cells(i, 5).Value = "Out"
+        buyername = Buyer.Value
+        amounts = amounts * -1
+        ws.Cells(i, 6).Value = amounts * price * -1
     End If
     
-    If ws.Cells(i, 5).Value = "In" Then
-        ws.Cells(i, 6).Value = -1 * Cells(i, 2).Value * Cells(i, 4).Value
-    Else
-        ws.Cells(i, 6).Value = 1 * Cells(i, 2).Value * Cells(i, 4).Value
-    End If
+    ws.Cells(i, 3).Value = names
+    ws.Cells(i, 4).Value = amounts
+    ws.Cells(i, 1).Value = DateSerial(years, months, days)
+    ws.Cells(i, 5).Value = price
+    ws.Cells(i, 2).Value = buyername
     
     Name_obj.Value = ""
     Amount_obj.Value = ""
@@ -57,8 +73,8 @@ Else
     Month_obj.Value = ""
     Day_obj.Value = ""
     Price_obj.Value = ""
+    Buyer.Value = ""
     in_obj.Value = False
-    out_obj.Value = False
     Unload Me
 End If
 
@@ -86,25 +102,25 @@ ElseIf years < 1900 Or years > 2100 _
 Or months < 1 Or months > 12 _
 Or days < 1 Or days > 31 Then
     MsgBox ("Çë¼ì²éÈÕÆÚ")
-ElseIf in_obj.Value = False And out_obj.Value = False Then
+ElseIf in_obj.Value = False And Buyer.Value = False Then
     MsgBox ("Çë¼ì²é»õÎï²Ù×÷")
 Else
-    ws.Cells(i, 1).Value = names
-    ws.Cells(i, 2).Value = amounts
-    ws.Cells(i, 3).Value = DateSerial(years, months, days)
-    ws.Cells(i, 4).Value = price
-    
+
     If in_obj.Value = True Then
-        ws.Cells(i, 5).Value = "In"
+        buyername = "- ½ø»õ -"
+        price = price * -1
+        ws.Cells(i, 6).Value = amounts * price
     Else
-        ws.Cells(i, 5).Value = "Out"
+        buyername = Buyer.Value
+        amounts = amounts * -1
+        ws.Cells(i, 6).Value = amounts * price * -1
     End If
     
-    If ws.Cells(i, 5).Value = "In" Then
-        ws.Cells(i, 6).Value = -1 * Cells(i, 2).Value * Cells(i, 4).Value
-    Else
-        ws.Cells(i, 6).Value = 1 * Cells(i, 2).Value * Cells(i, 4).Value
-    End If
+    ws.Cells(i, 3).Value = names
+    ws.Cells(i, 4).Value = amounts
+    ws.Cells(i, 1).Value = DateSerial(years, months, days)
+    ws.Cells(i, 5).Value = price
+    ws.Cells(i, 2).Value = buyername
     
     Name_obj.Value = ""
     Amount_obj.Value = ""
@@ -112,8 +128,8 @@ Else
     Month_obj.Value = ""
     Day_obj.Value = ""
     Price_obj.Value = ""
+    Buyer.Value = ""
     in_obj.Value = False
-    out_obj.Value = False
 End If
 
 End Sub
