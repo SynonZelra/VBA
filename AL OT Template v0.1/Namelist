@@ -1,0 +1,125 @@
+Private Sub worksheet_change(ByVal Target As Range)
+
+Dim cc As Range
+Dim tg, org As Worksheet
+Set tg = Sheets("Report")
+Set org = Sheets("ShopList")
+
+Dim r, c As Integer
+
+Dim pn As String
+
+For Each cc In Target
+    With cc
+        r = .Row
+        c = .Column
+        
+        If r > 1 Then
+            Select Case c
+                Case 1
+                    If Len(cc) = 8 Then
+                        pn = CStr(.Value)
+                    ElseIf Len(cc) = 6 Then
+                        pn = "00" & CStr(.Value)
+                    Else
+                        pn = ""
+                    End If
+                        tg.Cells(r, c).NumberFormat = "@"
+                        tg.Cells(r, c).Value = pn
+                Case 2, 3, 4, 8
+                    tg.Cells(r, c).Value = .Value
+                Case 6
+                    tg.Cells(r, c - 1).Value = .Value
+                    If cc.Value <> "" Then
+                        If Sheets("Namelist").Cells(r, 10).Value <> "" Then
+                            Call calc(r)
+                        End If
+                    Else
+                        Sheets("Report").Cells(r, 9).Value = ""
+                    End If
+                Case 7
+                    tg.Cells(r, c).Value = .Value
+                    If .Value = "" Then
+                        tg.Cells(r, c - 1).Value = ""
+                    Else
+                        If org.UsedRange.Find(what:=.Value) Is Nothing Then
+                            tg.Cells(r, c - 1).Value = "NotFound"
+                        Else
+                            tg.Cells(r, c - 1).Value = WorksheetFunction.VLookup( _
+                            .Value, org.Range("B:C"), 2, False)
+                        End If
+                    End If
+                Case 9
+                    tg.Cells(r, 13).Value = .Value
+                Case 10
+                    If cc.Value <> "" Then
+                        If Sheets("Namelist").Cells(r, 6).Value <> "" Then
+                            Call calc(r)
+                        End If
+                    Else
+                        Sheets("Report").Cells(r, 9).Value = ""
+                    End If
+            End Select
+        End If
+    End With
+Next
+End Sub
+
+Public Function calc(ByVal rv As Integer)
+
+Dim thisyear As Integer
+Dim alact As Double
+Dim base As Integer
+
+Dim ws As Worksheet
+Set ws = Sheets("Namelist")
+thisyear = Sheets("ShopList").Cells(2, 5).Value
+
+Dim yearstart, yearend, yearcacl As Date
+yearstart = DateSerial(thisyear, 1, 1)
+yearend = DateSerial(thisyear, 12, 31)
+yearcalc = DateSerial(thisyear, Month(ws.Cells(rv, 6).Value), _
+Day(ws.Cells(rv, 6).Value))
+
+Select Case ws.Cells(rv, 10).Value
+    Case "SM/ASM"
+        base = 15
+    Case Else
+        base = 5
+End Select
+
+If Year(ws.Cells(rv, 6).Value) > thisyear Then
+    alact = ""
+ElseIf Year(ws.Cells(rv, 6).Value) = thisyear Then
+    alact = base * (yearend - yearcalc) / 365
+Else
+    alact = (yearcalc - yearstart) * (base + thisyear - Year(ws.Cells(rv, 6).Value) - 1) / 365 _
+    + (yearend - yearcalc + 1) * (base + thisyear - Year(ws.Cells(rv, 6).Value)) / 365
+End If
+
+alact = WorksheetFunction.RoundUp(alact * 2, 0) * 0.5
+
+If ws.Cells(rv, 10).Value = "SM/ASM" Then
+    If alact > 20 Then
+        alact = 20
+    End If
+Else
+    If alact > 10 Then
+        alact = 10
+    End If
+End If
+
+Select Case ws.Cells(rv, 10).Value
+    Case "10 Days"
+        If alact < 10 Then
+            alact = 10
+        End If
+    Case "15 Days"
+        If alact < 15 Then
+            alact = 15
+        End If
+End Select
+
+Sheets("Report").Cells(rv, 9).Value = alact
+
+End Function
