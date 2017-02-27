@@ -1,0 +1,62 @@
+Private Sub worksheet_change(ByVal sel As Range)
+
+Dim period
+Dim tr As Integer
+Dim wss As Worksheet
+Set wss = Sheets("Report")
+
+With sel
+    If .Count = 1 And .Column = 19 And .Row = 1 And wss.UsedRange.Rows.Count > 1 Then
+        tr = wss.UsedRange.Rows.Count
+        period = .Value
+        While tr > 1
+            If wss.Cells(tr, 1).Value <> "" Then
+            
+                wss.Cells(tr, 10).Value = _
+                WorksheetFunction.RoundUp(wss.Cells(tr, 9) _
+                * 2 * Right(period, 2) / 12, 0) * 0.5
+                
+                wss.Cells(tr, 11).Value = _
+                WorksheetFunction.SumIfs(Sheets("Record").Columns(4), _
+                Sheets("Record").Columns(1), wss.Cells(tr, 3).Value, _
+                Sheets("Record").Columns(2), "AL", _
+                Sheets("Record").Columns(3), "<=" & .Value)
+                
+                wss.Cells(tr, 12).Value = _
+                wss.Cells(tr, 10).Value - wss.Cells(tr, 11).Value
+                
+                If Right(.Value, 2) < 4 Then
+                    wss.Cells(tr, 12).Value = _
+                    wss.Cells(tr, 12).Value + _
+                    wss.Cells(tr, 8).Value
+                End If
+                
+                wss.Cells(tr, 14).Value = _
+                WorksheetFunction.SumIfs(Sheets("Record").Columns(4), _
+                Sheets("Record").Columns(1), wss.Cells(tr, 3).Value, _
+                Sheets("Record").Columns(2), "OT+", _
+                Sheets("Record").Columns(3), "<=" & .Value) _
+                - _
+                WorksheetFunction.SumIfs(Sheets("Record").Columns(4), _
+                Sheets("Record").Columns(1), wss.Cells(tr, 3).Value, _
+                Sheets("Record").Columns(2), "OT-", _
+                Sheets("Record").Columns(3), "<=" & .Value) _
+                
+                wss.Cells(tr, 15).Value = _
+                WorksheetFunction.SumIfs(Sheets("Record").Columns(4), _
+                Sheets("Record").Columns(1), wss.Cells(tr, 3).Value, _
+                Sheets("Record").Columns(2), "OT Cashout", _
+                Sheets("Record").Columns(3), "<=" & .Value) _
+                
+                wss.Cells(tr, 16).Value = _
+                wss.Cells(tr, 13).Value + _
+                wss.Cells(tr, 14).Value - _
+                wss.Cells(tr, 15).Value
+                
+            End If
+            tr = tr - 1
+        Wend
+    End If
+End With
+
+End Sub
