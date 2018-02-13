@@ -1,0 +1,196 @@
+Private Sub back_Click()
+
+CDpath.Value = ""
+PDpath.Value = ""
+Outpath.Value = ""
+upper.Value = ""
+lower.Value = ""
+
+Load.Hide
+
+End Sub
+
+Private Sub CDbrowse_Click()
+
+Dim cdpathfile As FileDialog
+
+Set cdpathfile = Application.FileDialog(msoFileDialogFilePicker)
+
+With cdpathfile
+    .ButtonName = "Select"
+    .AllowMultiSelect = False
+    .Filters.Clear
+    .Filters.Add "Excel Files", "*.xlsx"
+    .Title = "Please select Cost Distribution Query Report"
+    .InitialView = msoFileDialogViewList
+    If .Show <> 0 Then
+        CDpath.Value = .SelectedItems(1)
+    End If
+End With
+
+Set cdpathfile = Nothing
+
+End Sub
+
+Private Sub execute_Click()
+
+Dim execute As Boolean
+execute = True
+Dim Output As String
+Dim register, cost, dist As Workbook
+Dim registersheet, costsheet, costdist, costerror As Worksheet
+Dim check, costnum, costerr As String
+Dim u, l As String
+Dim i, r As Integer
+Dim findrow As Range
+Dim scan, index, search, left As Integer
+Dim num, rate As Double
+Dim dbg As Integer
+
+If CDpath.Value = "" Or Dir(CDpath.Value) = "" Then
+    execute = False
+    MsgBox ("Please check Cost Distribution Report path")
+    
+    ElseIf PDpath.Value = "" Or Dir(PDpath.Value) = "" Then
+        execute = False
+        MsgBox ("Please check Payroll Detail Report path")
+        
+        ElseIf lower.Value = "" Or upper.Value = "" Or IsNumeric(lower.Value) Or IsNumeric(upper.Value) Then
+        execute = False
+        MsgBox ("Please check Distribution Rage")
+End If
+
+If execute = True Then
+
+    MsgBox ("This might take serveral minutes, please be patient for the next message box.")
+    Application.ScreenUpdating = False
+    Output = Outpath.Value
+    Workbooks.Open (PDpath.Value)
+    Set register = ActiveWorkbook
+    Set registersheet = ActiveSheet
+    Workbooks.Open (CDpath.Value)
+    Set cost = ActiveWorkbook
+    Set costsheet = ActiveSheet
+    Set dist = Workbooks.Add
+    Set costdist = ActiveSheet
+    costdist.Name = "Cost Distribution"
+    Set costerror = dist.Sheets.Add
+    costerror.Name = "Distribution Error"
+    
+    u = upper.Value
+    l = lower.Value
+    
+    costsheet.Range("A1:D1").Copy costdist.Cells(1, 1)
+    costsheet.Range("A1:D1").Copy costerror.Cells(1, 1)
+    registersheet.Range(l & "1:" & u & "1").Copy costdist.Cells(1, 5)
+    checknum = 2
+    costnum = 2
+    costerr = 2
+    
+    While costsheet.Cells(checknum, 1).Value <> ""
+        If Not registersheet.Columns(4).EntireColumn.Find(costsheet.Cells(checknum, 1).Value) Is Nothing Then
+            If CInt(costsheet.Cells(checknum, 4).Value) <> 0 Then
+                costsheet.Rows(checknum).Copy costdist.Cells(costnum, 1)
+                costnum = costnum + 1
+            Else
+                costsheet.Rows(checknum).Copy costerror.Cells(costerr, 1)
+                costerr = costerr + 1
+            End If
+        End If
+        checknum = checknum + 1
+    Wend
+    
+    i = 2
+    
+    With costdist
+        While .Cells(i, 1).Value <> ""
+            Set findrow = registersheet.Columns(4).EntireColumn.Find(.Cells(i, 1).Value)
+            r = findrow.Row
+            registersheet.Range(l & r & ":" & u & r).Copy .Cells(i, 5)
+            i = i + 1
+        Wend
+    
+    scan = 2
+    
+    While .Cells(scan, 4).Value <> ""
+        rate = Format(.Cells(scan, 4).Value, "0.00")
+        If Cells(scan, 4).Value = "100.00" Then
+        dbg = 0
+            scan = scan + 1
+        Else
+            If .Cells(scan, 1).Value <> .Cells(scan + 1, 1).Value _
+            And .Cells(scan, 1).Value = .Cells(scan - 1, 1).Value Then
+                index = 5
+                dbg = 1
+                While .Cells(scan, index).Value <> ""
+                    search = 2
+                    While .Cells(search, 1).Value <> .Cells(scan, 1).Value
+                        search = search + 1
+                    Wend
+                    For left = search To scan - 1 Step 1
+                        .Cells(scan, index).Value = .Cells(scan, index).Value - .Cells(left, index).Value
+                    Next left
+                    index = index + 1
+                Wend
+            Else
+                index = 5
+                dbg = 2
+                While .Cells(scan, index).Value <> ""
+                    .Cells(scan, index).Value = .Cells(scan, index).Value * rate / 100
+                    index = index + 1
+                Wend
+            End If
+        End If
+        scan = scan + 1
+    Wend
+
+    End With
+    
+    dist.SaveAs Filename:=Output & "/PPG Payroll Distribution " & Format(Now(), "yyyy-mm-dd hh-mm-ss") & ".xlsx"
+    dist.Close savechanges:=False
+    register.Close savechanges:=False
+    cost.Close savechanges:=False
+    MsgBox ("OK")
+End If
+
+End Sub
+
+Private Sub Outputpath_Click()
+
+Dim outpathfile As FileDialog
+
+Set outpathfile = Application.FileDialog(msoFileDialogFolderPicker)
+
+With outpathfile
+    .ButtonName = "Select"
+    .AllowMultiSelect = False
+    .Title = "Please select the folder to output"
+    .InitialView = msoFileDialogViewList
+    If .Show <> 0 Then
+        Outpath.Value = .SelectedItems(1)
+    End If
+End With
+
+End Sub
+
+Private Sub PDbrowse_Click()
+
+Dim pdpathfile As FileDialog
+
+Set pdpathfile = Application.FileDialog(msoFileDialogFilePicker)
+
+With pdpathfile
+    .ButtonName = "Select"
+    .AllowMultiSelect = False
+    .Filters.Clear
+    .Filters.Add "Excel Files", "*.xlsx"
+    .Title = "Please select Payroll Detail Report"
+    .InitialView = msoFileDialogViewList
+    If .Show <> 0 Then
+        PDpath.Value = .SelectedItems(1)
+    End If
+End With
+
+Set pdpathfile = Nothing
+
+End Sub
